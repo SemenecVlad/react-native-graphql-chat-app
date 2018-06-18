@@ -32,10 +32,10 @@ class SignInScreen extends Component {
             variables: {
                 email, password
             }
-        }).then((data) => {
-            // AsyncStorage.setItem('token', token);
-            // AsyncStorage.setItem('userId', id);
-            // AsyncStorage.setItem('userName', name);
+        }).then(({ data: { signinUser: { token, user: { id, name } } } }) => {
+            AsyncStorage.setItem('token', token);
+            AsyncStorage.setItem('userId', id);
+            AsyncStorage.setItem('userName', name);
             this.props.navigation.navigate('Register')
             // console.log(name, id, token)
         })
