@@ -18,6 +18,12 @@ class SignInScreen extends Component {
         }
     }
 
+    // componentDidMount() {
+    //     if (AsyncStorage.getItem('userId')) {
+    //         this.props.navigation.navigate('ChatScreen')
+    //     }
+    // }
+
     state = {
         email: '',
         password: '',
@@ -35,8 +41,7 @@ class SignInScreen extends Component {
         }).then(({ data: { signinUser: { token, user: { id, name } } } }) => {
             AsyncStorage.setItem('token', token);
             AsyncStorage.setItem('userId', id);
-            AsyncStorage.setItem('userName', name);
-            this.props.navigation.navigate('Register')
+            this.props.navigation.navigate('ChatScreen')
             // console.log(name, id, token)
         })
             .catch(error => {

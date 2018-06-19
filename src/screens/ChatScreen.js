@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import { View, ScrollView, Text, AsyncStorage } from 'react-native';
 import { FormInput } from 'react-native-elements';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -7,30 +7,63 @@ import gql from 'graphql-tag';
 import MessageWrap from '../components/MessageWrap';
 import MessageInput from '../components/MessageInput';
 
-const ChatScreen = (props) => (
-    <Query query={ALL_POSTS_QUERY}>
-        {({ ...data, subscribeToMore }) => {
-            return (
-                <View style={styles.container}>
-                    <MessageWrap
-                        {...data}
-                        refresh={() => data.refetch()}
-                        subscribeToNewPosts={() => subscribeToMore({
-                            document: POSTS_SUBSCRIPTION,
-                            updateQuery: (prev, { subscriptionData }) => {
-                                const newPost = subscriptionData.data.Post.node;
-                                if (!subscriptionData.data) return prev;
-                                return Object.assign({}, prev, {
-                                    allPosts: [newPost, ...prev.allPosts]
-                                });
-                            }
-                        })}
-                    />
-                    <MessageInput refresh={() => data.refetch()} />
-                </View>)
-        }}
-    </Query>
-);
+class ChatScreen extends Component {
+    componentDidMount() {
+        if (this.state.userId === null) {
+            this.props.navigation.navigate('Auth')
+        }
+
+        this.getUserId();
+    }
+
+    state = {
+        userId: null,
+    }
+
+    getUserId = async () => {
+        try {
+            const id = await AsyncStorage.getItem('userId');
+            if (id !== null) {
+                this.setState({
+                    userId: id
+                })
+            }
+        } catch (error) {
+            this.setState({
+                error
+            })
+        }
+    }
+    render() {
+        return (
+            <Query query={ALL_POSTS_QUERY}>
+                {({ ...data, subscribeToMore }) => {
+                    return (
+                        <View style={styles.container}>
+                            <MessageWrap
+                                {...data}
+                                refresh={() => data.refetch()}
+                                subscribeToNewPosts={() => subscribeToMore({
+                                    document: POSTS_SUBSCRIPTION,
+                                    updateQuery: (prev, { subscriptionData }) => {
+                                        const newPost = subscriptionData.data.Post.node;
+                                        if (!subscriptionData.data) return prev;
+                                        return Object.assign({}, prev, {
+                                            allPosts: [newPost, ...prev.allPosts]
+                                        });
+                                    }
+                                })}
+                            />
+                            <MessageInput
+                                refresh={() => data.refetch()}
+                                userId={this.state.userId}
+                            />
+                        </View>)
+                }}
+            </Query>
+        )
+    }
+}
 
 
 const styles = {

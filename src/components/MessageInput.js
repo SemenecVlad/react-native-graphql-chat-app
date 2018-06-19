@@ -4,6 +4,7 @@ import { View, AsyncStorage } from 'react-native';
 import { FormInput, Button } from 'react-native-elements';
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag';
+import CameraRollPicker from 'react-native-camera-roll-picker';
 
 
 class MessageInput extends Component {
@@ -11,17 +12,19 @@ class MessageInput extends Component {
         description: '',
         file: null,
         filesIds: 'cjia6p4gu091u0156homvbqtt',
-        userId: AsyncStorage.getItem('userId')
-        // TODO check AsyncStorage, something don't work, because with hardcoded userId - work's good
     }
 
-
     handlePost = async () => {
-        const { description, userId, filesIds } = this.state
+        const { description, filesIds } = this.state;
+        const { userId } = this.props;
         await this.props.createPostMutation({ variables: { description, userId, filesIds } }).catch(err => console.log('[POST ERROR]', err))
         this.setState({
             description: '',
-        })
+        });
+
+    }
+
+    myImages = () => {
 
     }
     render() {
@@ -34,7 +37,15 @@ class MessageInput extends Component {
                     placeholder='Enter your message here'
                     onChangeText={(description) => this.setState({ description })}
                 />
-                <Button onPress={this.handlePost} title='Send' />
+                <Button
+                    disabled={this.state.description === '' ? true : false}
+                    onPress={this.handlePost}
+                    title='Send'
+                    buttonStyle={{ backgroundColor: 'aqua' }}
+                />
+                {/* <CameraRollPicker
+                    callback={this.myImages}
+                    style={{ width: 300, height: 50 }} /> */}
             </View>
         )
     }

@@ -10,12 +10,16 @@ class Message extends Component {
         this.props.refresh();
     }
     render() {
-        let { from, id, userName, files, time, post: { description } } = this.props;
+        let { id, userName, files, time, post: { description } } = this.props;
         return (
-            <View style={styles.messageStyle} >
-                <Text>Message from: {userName}</Text>
-                <Text>{description}</Text>
-                <TouchableOpacity onPress={() => this.deletePost(id)}>
+            <View style={styles.postStyle} >
+                <View style={{ width: 280 }}>
+                    <Text style={styles.messageStyle}>{description}</Text>
+                    <Text style={styles.descriptionStyle}>Message by: {userName}</Text>
+                </View>
+
+                <TouchableOpacity
+                    onPress={() => this.deletePost(id)}>
                     <Text>
                         Delete
                     </Text>
@@ -26,11 +30,26 @@ class Message extends Component {
 }
 
 const styles = {
-    messageStyle: {
+    postStyle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 10,
-        backgroundColor: 'aqua',
-        marginBottom: 10
+        backgroundColor: 'wheat',
+        marginBottom: 10,
+        marginLeft: 10,
+        marginRight: 10,
+    },
+    messageStyle: {
+        fontWeight: 'bold'
+    },
+    descriptionStyle: {
+        fontSize: 10
+    },
+    buttonStyle: {
+
     }
+
 }
 
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, Dimensions } from 'react-native';
+import { ScrollView, View, Dimensions, FlatList } from 'react-native';
 import Message from './Message';
 
 class MessageWrap extends Component {
@@ -18,8 +18,13 @@ class MessageWrap extends Component {
     render() {
         const { styles, data: { allPosts }, formatedDate } = this.props;
         return (
-            <ScrollView style={{ flex: 1, backgroundColor: 'white', width: Dimensions.get("window").width }}>
-                {allPosts && allPosts.map(post => (
+            <ScrollView
+                style={style.wrapperStyles}
+                ref={ref => this.scrollView = ref}
+                onContentSizeChange={(contentWidth, contentHeight) => {
+                    this.scrollView.scrollToEnd({ animated: true });
+                }}>
+                <View style={{ flexDirection: 'column-reverse' }}>{allPosts && allPosts.map(post => (
                     <Message
                         time={post.createdAt}
                         from="You"
@@ -29,9 +34,19 @@ class MessageWrap extends Component {
                         post={post}
                         files={post.files[0]}
                     />
-                ))}
+                ))}</View>
             </ScrollView>
         )
+    }
+}
+
+
+const style = {
+    wrapperStyles: {
+        flex: 1,
+        backgroundColor: 'white',
+        width: Dimensions.get("window").width,
+        // flexDirection: 'column-reverse'
     }
 }
 
