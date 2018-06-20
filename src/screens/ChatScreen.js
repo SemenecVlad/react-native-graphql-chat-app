@@ -14,6 +14,7 @@ class ChatScreen extends Component {
         }
 
         this.getUserId();
+        console.log(this.getUserId())
     }
 
     state = {
@@ -23,6 +24,7 @@ class ChatScreen extends Component {
     getUserId = async () => {
         try {
             const id = await AsyncStorage.getItem('userId');
+            console.log('getUserId', id);
             if (id !== null) {
                 this.setState({
                     userId: id

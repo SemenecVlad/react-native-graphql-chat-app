@@ -93,7 +93,7 @@ const styles = {
     },
     label: {
         // alignSelf: 'left',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     button: {
         marginTop: 20,

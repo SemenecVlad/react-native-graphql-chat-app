@@ -5,7 +5,7 @@ import {
     AsyncStorage
     // Button
 } from 'react-native';
-import { graphql, Mutation } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { FormLabel, FormInput, Button } from 'react-native-elements';
@@ -42,7 +42,8 @@ class SignInScreen extends Component {
             AsyncStorage.setItem('token', token);
             AsyncStorage.setItem('userId', id);
             this.props.navigation.navigate('ChatScreen')
-            // console.log(name, id, token)
+            console.log(name, id, token);
+            console.log('userId from AsyncStorage', AsyncStorage.getItem('userId'))
         })
             .catch(error => {
                 this.setState({
@@ -110,7 +111,7 @@ const styles = {
     },
     label: {
         // alignSelf: 'left',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     button: {
         marginTop: 20,

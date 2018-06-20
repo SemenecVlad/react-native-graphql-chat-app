@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 
@@ -11,10 +11,12 @@ class Message extends Component {
     }
     render() {
         let { id, userName, files, time, post: { description } } = this.props;
+        const defImg = 'https://files.graph.cool/cji3486nr3q4b0191ifdu8j6x/cjia6p3ts091t0156bk0j4a2b';
         return (
             <View style={styles.postStyle} >
-                <View style={{ width: 280 }}>
+                <View style={{ width: 280, justifyContent: 'flex-start' }}>
                     <Text style={styles.messageStyle}>{description}</Text>
+                    {files !== undefined ? <Image source={{ uri: files.url }} style={(files.url === defImg ? { resizeMode: 'center' } : { resizeMode: 'center', width: 100, height: 100 })} /> : <View />}
                     <Text style={styles.descriptionStyle}>Message by: {userName}</Text>
                 </View>
 
