@@ -7,7 +7,7 @@ class Message extends Component {
     deletePost = async (id) => {
         await this.props.deletePostMutation({ variables: { id } });
         // console.log('Delete');
-        this.props.refresh();
+        // this.props.refresh();
     }
     render() {
         let { id, userName, files, time, post: { description } } = this.props;

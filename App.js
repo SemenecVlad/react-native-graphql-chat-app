@@ -62,7 +62,7 @@ const RootNav = createBottomTabNavigator(
   {
     initialRouteName: 'Auth',
     navigationOptions: {
-      tabBarVisible: true
+      tabBarVisible: false
     },
   }
 );

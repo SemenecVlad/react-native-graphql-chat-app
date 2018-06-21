@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { View, AsyncStorage } from 'react-native';
-// import { withRouter } from 'react-router-dom';
 import { FormInput, Button } from 'react-native-elements';
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag';
-import CameraRollPicker from 'react-native-camera-roll-picker';
 import ImagePicker from 'react-native-image-picker';
 
 
@@ -13,7 +11,8 @@ class MessageInput extends Component {
         description: '',
         file: null,
         filesIds: 'cjia6p4gu091u0156homvbqtt',
-        avatarSource: ''
+        avatarSource: '',
+        loading: false
     }
 
     handlePost = async () => {
@@ -57,18 +56,10 @@ class MessageInput extends Component {
             }
             else {
                 this.setState({
-                    file: response
+                    file: response,
+                    loading: true
                 });
-                // let source = { uri: response.uri };
 
-                // // You can also display the image using data:
-                // // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-                // console.log(source)
-
-                // this.setState({
-                //     avatarSource: source
-                // });
-                // console.log('State', this.state.avatarSource)
                 let file = this.state.file;
                 let localUri = response.uri;
                 let filename = response.fileName;
@@ -105,7 +96,8 @@ class MessageInput extends Component {
                             this.handlePost();
                             this.setState({
                                 filesIds: 'cjia6p4gu091u0156homvbqtt',
-                                file: null
+                                file: null,
+                                loading: false
                             })
                         })
                         .catch(error => console.error(`Error uploading image`))
@@ -115,7 +107,7 @@ class MessageInput extends Component {
     }
 
     render() {
-        let { description } = this.state;
+        let { description, loading } = this.state;
         return (
             <View>
                 <FormInput
@@ -131,8 +123,9 @@ class MessageInput extends Component {
                     buttonStyle={{ backgroundColor: 'aqua' }}
                 />
                 <Button
+                    loading={(loading) ? true : false}
                     onPress={this.showFilePicker}
-                    title='File'
+                    title={loading ? 'Loading...' : 'Send File'}
                 />
             </View>
         )

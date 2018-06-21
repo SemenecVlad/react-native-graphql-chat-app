@@ -18,22 +18,26 @@ class SignInScreen extends Component {
         }
     }
 
-    // componentDidMount() {
-    //     if (AsyncStorage.getItem('userId')) {
-    //         this.props.navigation.navigate('ChatScreen')
-    //     }
-    // }
+    componentDidMount() {
+        if (AsyncStorage.getItem('userId') !== undefined || AsyncStorage.getItem('userId') !== '') {
+            this.props.navigation.navigate('ChatScreen')
+        }
+    }
 
     state = {
         email: '',
         password: '',
-        error: ''
+        error: '',
+        loading: false
     }
 
     handleSubmit = async () => {
         // e.preventDefault();
         // this.props.navigation.navigate('Register')
         let { email, password } = this.state;
+        this.setState({
+            loading: true
+        })
         await this.props.signInMutation({
             variables: {
                 email, password
@@ -41,7 +45,10 @@ class SignInScreen extends Component {
         }).then(({ data: { signinUser: { token, user: { id, name } } } }) => {
             AsyncStorage.setItem('token', token);
             AsyncStorage.setItem('userId', id);
-            this.props.navigation.navigate('ChatScreen')
+            this.setState({
+                loading: false
+            })
+            this.props.navigation.navigate('ChatScreen');
             console.log(name, id, token);
             console.log('userId from AsyncStorage', AsyncStorage.getItem('userId'))
         })
@@ -60,7 +67,7 @@ class SignInScreen extends Component {
         }
     }
     render() {
-        let { email, password, error } = this.state;
+        let { email, password, error, loading } = this.state;
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>Sign In</Text>
@@ -79,8 +86,10 @@ class SignInScreen extends Component {
                     onChangeText={(password) => this.setState({ password })}
                     placeholder="Your Password..." />
                 <Button
+                    activityIndicatorStyle={{ padding: 11 }}
+                    loading={(loading) ? true : false}
                     buttonStyle={styles.button}
-                    onPress={this.handleSubmit} title='Sign In' />
+                    onPress={this.handleSubmit} title={(loading) ? '' : 'Sign In'} />
             </View>
         );
     }

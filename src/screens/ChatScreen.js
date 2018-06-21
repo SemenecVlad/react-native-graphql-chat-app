@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, AsyncStorage } from 'react-native';
+import { View, ScrollView, Text, AsyncStorage, ActivityIndicator } from 'react-native';
 import { FormInput } from 'react-native-elements';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -39,7 +39,8 @@ class ChatScreen extends Component {
     render() {
         return (
             <Query query={ALL_POSTS_QUERY}>
-                {({ ...data, subscribeToMore }) => {
+                {({ ...data, subscribeToMore, loading }) => {
+                    if (loading) return <View style={styles.container}><ActivityIndicator size="large" color="#0000ff" /></View>
                     return (
                         <View style={styles.container}>
                             <MessageWrap
@@ -49,7 +50,13 @@ class ChatScreen extends Component {
                                     document: POSTS_SUBSCRIPTION,
                                     updateQuery: (prev, { subscriptionData }) => {
                                         const newPost = subscriptionData.data.Post.node;
+                                        const delPost = subscriptionData.data.Post.previousValues;
                                         if (!subscriptionData.data) return prev;
+                                        if (delPost !== null) {
+                                            return Object.assign({}, prev, {
+                                                allPosts: [...prev.allPosts].splice(delPost.id, 1)
+                                            });
+                                        }
                                         return Object.assign({}, prev, {
                                             allPosts: [newPost, ...prev.allPosts]
                                         });
@@ -96,7 +103,7 @@ const ALL_POSTS_QUERY = gql`
 const POSTS_SUBSCRIPTION = gql`
   subscription {
       Post(filter: {
-          mutation_in: [CREATED]
+          mutation_in: [CREATED, DELETED]
       }) {
           node {
               description
@@ -108,6 +115,9 @@ const POSTS_SUBSCRIPTION = gql`
               files {
                   url
               }
+          }
+          previousValues {
+              id
           }
       }
   }
