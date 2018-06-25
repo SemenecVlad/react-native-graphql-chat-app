@@ -26,7 +26,7 @@ class RegisterScreen extends Component {
             }
         }).then((data) => {
             // console.log(data)
-            this.props.navigation.navigate('ChatScreen')
+            this.props.navigation.navigate('Auth')
         })
             .catch((error) => {
                 console.log("ЁБА...", error)
