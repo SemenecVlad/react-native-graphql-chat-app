@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View } from 'react-native';
 import { FormInput, Button } from 'react-native-elements';
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag';
@@ -134,16 +134,16 @@ class MessageInput extends Component {
 
 const CREATE_POST_MUTATION = gql`
   mutation CreatePostMutation($userId: ID!, $description: String!, $filesIds: [ID!]) {
-                                createPost(userId: $userId, description: $description, filesIds: $filesIds) {
-                                    id
-                                    description
-                                    files{
-                                        id
-                                        url
-                                    }
-                                }
-                            }
-                                `;
+    createPost(userId: $userId, description: $description, filesIds: $filesIds) {
+        id
+        description
+        files{
+            id
+            url
+        }
+    }
+}
+`;
 
 const MessageInputWithMutation = compose(
     withApollo,

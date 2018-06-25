@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Dimensions, FlatList } from 'react-native';
+import { ScrollView, View, Dimensions } from 'react-native';
 import Message from './Message';
 
 class MessageWrap extends Component {
@@ -46,7 +46,6 @@ const style = {
         flex: 1,
         backgroundColor: 'white',
         width: Dimensions.get("window").width,
-        // flexDirection: 'column-reverse'
     }
 }
 

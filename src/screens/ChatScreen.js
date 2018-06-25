@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, AsyncStorage, ActivityIndicator } from 'react-native';
-import { FormInput } from 'react-native-elements';
+import { View, AsyncStorage, ActivityIndicator } from 'react-native';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 

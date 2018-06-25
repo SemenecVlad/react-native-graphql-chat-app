@@ -3,7 +3,6 @@ import {
     View,
     Text,
     AsyncStorage
-    // Button
 } from 'react-native';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -19,7 +18,7 @@ class SignInScreen extends Component {
     }
 
     componentDidMount() {
-        if (AsyncStorage.getItem('userId') !== undefined || AsyncStorage.getItem('userId') !== '') {
+        if (AsyncStorage.getItem('userId') !== undefined && AsyncStorage.getItem('userId') !== '') {
             this.props.navigation.navigate('ChatScreen')
         }
     }
@@ -32,8 +31,6 @@ class SignInScreen extends Component {
     }
 
     handleSubmit = async () => {
-        // e.preventDefault();
-        // this.props.navigation.navigate('Register')
         let { email, password } = this.state;
         this.setState({
             loading: true
@@ -71,10 +68,10 @@ class SignInScreen extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>Sign In</Text>
-                <FormLabel containerStyle={styles.label}>Email:</FormLabel>
+                <FormLabel>Email:</FormLabel>
                 <FormInput
                     name="email"
-                    value={this.state.email}
+                    value={email}
                     onChangeText={(email) => this.setState({ email })}
                     placeholder="Your Email..."
                 />
@@ -82,7 +79,7 @@ class SignInScreen extends Component {
                 <FormInput
                     secureTextEntry
                     name="password"
-                    value={this.state.password}
+                    value={password}
                     onChangeText={(password) => this.setState({ password })}
                     placeholder="Your Password..." />
                 <Button
@@ -90,6 +87,10 @@ class SignInScreen extends Component {
                     loading={(loading) ? true : false}
                     buttonStyle={styles.button}
                     onPress={this.handleSubmit} title={(loading) ? '' : 'Sign In'} />
+                <Text style={{ marginTop: 15 }}>Or</Text>
+                <Button
+                    buttonStyle={styles.button}
+                    onPress={() => this.props.navigation.navigate('Register')} title='Register' />
             </View>
         );
     }
@@ -117,10 +118,6 @@ const styles = {
     title: {
         fontSize: 24,
         fontWeight: 'bold'
-    },
-    label: {
-        // alignSelf: 'left',
-        // textAlign: 'center'
     },
     button: {
         marginTop: 20,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -14,12 +14,12 @@ class RegisterScreen extends Component {
 
     handleSubmit = async () => {
         let { email, password, passwordConfirm, name } = this.state;
-        // if (password !== passwordConfirm) {
-        //     this.setState({
-        //         error: 'Passwords must be an equal! Try again!'
-        //     });
-        //     return;
-        // }
+        if (password !== passwordConfirm) {
+            this.setState({
+                error: 'Passwords must be an equal! Try again!'
+            });
+            return;
+        }
         await this.props.registerMutation({
             variables: {
                 email, password, name
@@ -28,14 +28,13 @@ class RegisterScreen extends Component {
             // console.log(data)
             this.props.navigation.navigate('ChatScreen')
         })
-        // .catch((error) => {
-        //     console.log("ЁБА...",error)
-        //     this.setState({
-        //         error: "Oops! User already exists with that information"
-        //     })
-        // })
-        // // this.props.history.push('/chat')
-        // console.log(name, email, password)
+            .catch((error) => {
+                console.log("ЁБА...", error)
+                this.setState({
+                    error: "Oops! User already exists with that information"
+                })
+            })
+        console.log(name, email, password)
     }
     render() {
         let { email, password, passwordConfirm, name, error } = this.state;
@@ -50,7 +49,7 @@ class RegisterScreen extends Component {
                     onChangeText={(name) => this.setState({ name })}
                     placeholder="Your Name..." />
 
-                <FormLabel containerStyle={styles.label}>Email:</FormLabel>
+                <FormLabel>Email:</FormLabel>
                 <FormInput
                     name='email'
                     value={this.state.email}
@@ -75,6 +74,12 @@ class RegisterScreen extends Component {
                 <Button
                     buttonStyle={styles.button}
                     onPress={this.handleSubmit} title='Register' />
+                <View style={{ marginTop: 10, width: Dimensions.get("window").width }}>
+                    <Text style={{ textAlign: 'center' }}>Already have an account?</Text>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Auth')}>
+                        <Text style={{ textAlign: 'center', color: 'blue', fontWeight: 'bold', fontSize: 16 }}>Sign In</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -90,10 +95,6 @@ const styles = {
     title: {
         fontSize: 24,
         fontWeight: 'bold'
-    },
-    label: {
-        // alignSelf: 'left',
-        // textAlign: 'center'
     },
     button: {
         marginTop: 20,

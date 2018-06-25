@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  Text,
-  View
 } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation';
 
 import ApolloClient from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
