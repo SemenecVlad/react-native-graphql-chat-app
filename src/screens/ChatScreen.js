@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { View, AsyncStorage, ActivityIndicator } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, Image } from 'react-native';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import MessageWrap from '../components/MessageWrap';
 import MessageInput from '../components/MessageInput';
+import { Icon, Button, Container, Header, Body, Content, Left, Right, Footer, Item, Input } from 'native-base';
+
 
 class ChatScreen extends Component {
     componentDidMount() {
@@ -18,6 +20,15 @@ class ChatScreen extends Component {
 
     state = {
         userId: null,
+    }
+
+    static navigationOptions = {
+        drawerIcon: (
+            <Image
+                source={require('../assets/images/chat_icon.png')}
+                style={{ height: 24, width: 24 }}
+            />
+        )
     }
 
     getUserId = async () => {
@@ -37,38 +48,51 @@ class ChatScreen extends Component {
     }
     render() {
         return (
-            <Query query={ALL_POSTS_QUERY}>
-                {({ ...data, subscribeToMore, loading }) => {
-                    if (loading) return <View style={styles.container}><ActivityIndicator size="large" color="#0000ff" /></View>
-                    return (
-                        <View style={styles.container}>
-                            <MessageWrap
-                                {...data}
-                                refresh={() => data.refetch()}
-                                subscribeToNewPosts={() => subscribeToMore({
-                                    document: POSTS_SUBSCRIPTION,
-                                    updateQuery: (prev, { subscriptionData }) => {
-                                        const newPost = subscriptionData.data.Post.node;
-                                        const delPost = subscriptionData.data.Post.previousValues;
-                                        if (!subscriptionData.data) return prev;
-                                        if (delPost !== null) {
-                                            return Object.assign({}, prev, {
-                                                allPosts: [...prev.allPosts].splice(delPost.id, 1)
-                                            });
-                                        }
-                                        return Object.assign({}, prev, {
-                                            allPosts: [newPost, ...prev.allPosts]
-                                        });
-                                    }
-                                })}
+            <Container>
+                <Header>
+                    <Left>
+                        <Button transparent>
+                            <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Chat</Text>
+                    </Body>
+                    <Right>
+                        <Button transparent>
+                            <Icon name="ios-person-add"
+                                type="Ionicons"
+                                style={{ marginLeft: 0, marginRight: 0, fontSize: 30 }}
+                                onPress={() => this.props.navigation.openDrawer()}
                             />
-                            <MessageInput
-                                refresh={() => data.refetch()}
-                                userId={this.state.userId}
+                        </Button>
+
+                        <Button transparent>
+                            <Icon name="delete"
+                                type="MaterialIcons"
+                                style={{ marginLeft: 0, marginRight: 0, fontSize: 23 }}
+                                onPress={() => this.props.navigation.openDrawer()}
                             />
-                        </View>)
-                }}
-            </Query>
+                        </Button>
+                    </Right>
+                </Header>
+                <Content contentContainerStyle={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Text>ChatScreen</Text>
+                </Content>
+
+                <Footer style={{ backgroundColor: 'white', alignContent: 'center' }}>
+                    <Item regular style={{ flex: 1 }}>
+                        <Input placeholder="Enter your message..." />
+                    </Item>
+                    <Button primary rounded style={{ width: 45, marginTop: 5, paddingLeft: 0, paddingRight: 0 }}>
+                        <Icon name='send' type='MaterialIcons' style={{ fontSize: 20, marginLeft: 13, marginRight: 0 }} />
+                    </Button>
+                </Footer>
+            </Container>
         )
     }
 }

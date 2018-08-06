@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  Image,
+  Text
 } from 'react-native';
-import { createBottomTabNavigator } from 'react-navigation';
+// import { createBottomTabNavigator } from 'react-navigation';
+
+import { DrawerNavigator, DrawerItems } from 'react-navigation';
 
 import ApolloClient from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -16,6 +20,10 @@ import SignInScreen from './src/screens/auth/SignInScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
+import UsersScreen from './src/screens/UsersScreen';
+import RoomsScreen from './src/screens/RoomsScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import { Container, Content, Header, Body, Button, Icon } from 'native-base';
 
 const httpLink = new HttpLink({
   uri: 'https://api.graph.cool/simple/v1/cji3486nr3q4b0191ifdu8j6x'
@@ -42,34 +50,79 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-const RootNav = createBottomTabNavigator(
-  {
-    Auth: {
-      screen: SignInScreen
-    },
-    Register: {
-      screen: RegisterScreen
-    },
-    Welcome: {
-      screen: WelcomeScreen
-    },
-    ChatScreen: {
-      screen: ChatScreen
-    }
+// const RootNav = createBottomTabNavigator(
+//   {
+//     Auth: {
+//       screen: SignInScreen
+//     },
+//     Register: {
+//       screen: RegisterScreen
+//     },
+//     Welcome: {
+//       screen: WelcomeScreen
+//     },
+//     ChatScreen: {
+//       screen: ChatScreen
+//     }
+//   },
+//   {
+//     initialRouteName: 'Auth',
+//     navigationOptions: {
+//       tabBarVisible: false
+//     },
+//   }
+// );
+
+const CustomDrawerContentComponent = (props) => (
+  <Container>
+    <Header style={{ height: 150, backgroundColor: 'white' }}>
+      <Body>
+        <Image
+          style={styles.drawerImage}
+          source={require('./src/assets/images/graphql.png')} />
+      </Body>
+    </Header>
+
+    <Content>
+      <DrawerItems {...props} />
+      <Button
+        block
+        primary
+      >
+        <Icon name='home' />
+        <Text style={{ color: 'white' }}>Log Out</Text>
+      </Button>
+    </Content>
+  </Container>
+)
+
+const DrawNav = DrawerNavigator({
+  Home: {
+    screen: WelcomeScreen
   },
-  {
-    initialRouteName: 'Auth',
-    navigationOptions: {
-      tabBarVisible: false
-    },
+  Rooms: {
+    screen: RoomsScreen
+  },
+  Users: {
+    screen: UsersScreen
+  },
+  Chat: {
+    screen: ChatScreen
+  },
+  Settings: {
+    screen: SettingsScreen
   }
-);
+}, {
+    initialRouteName: 'Home',
+    drawerPosition: 'left',
+    contentComponent: CustomDrawerContentComponent
+  })
 
 export default class App extends Component {
   render() {
     return (
       <ApolloProvider client={client}>
-        <RootNav />
+        <DrawNav />
       </ApolloProvider>
     );
   }
@@ -94,4 +147,8 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  drawerImage: {
+    width: 260,
+    height: 120
+  }
 });
