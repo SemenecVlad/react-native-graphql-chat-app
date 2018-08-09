@@ -6,10 +6,7 @@ class RoomsScreen extends Component {
 
     static navigationOptions = {
         drawerIcon: (
-            <Image
-                source={require('../assets/images/chat_icon.png')}
-                style={{ height: 24, width: 24 }}
-            />
+            <Icon style={{ color: "blue", fontSize: 22 }} name='chat' type="Entypo" />
         )
     }
     render() {
@@ -24,7 +21,23 @@ class RoomsScreen extends Component {
                     <Body>
                         <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Rooms List</Text>
                     </Body>
-                    <Right />
+                    <Right>
+                        <Button transparent>
+                            <Icon name="ios-person-add"
+                                type="Ionicons"
+                                style={{ marginLeft: 0, marginRight: 0, fontSize: 30 }}
+                                onPress={() => this.props.navigation.openDrawer()}
+                            />
+                        </Button>
+
+                        {/* <Button transparent>
+                            <Icon name="delete"
+                                type="MaterialIcons"
+                                style={{ marginLeft: 0, marginRight: 0, fontSize: 23 }}
+                                onPress={() => this.props.navigation.openDrawer()}
+                            />
+                        </Button> */}
+                    </Right>
                 </Header>
                 <Content contentContainerStyle={{
                     flex: 1,

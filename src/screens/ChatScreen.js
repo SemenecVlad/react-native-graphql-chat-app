@@ -24,10 +24,7 @@ class ChatScreen extends Component {
 
     static navigationOptions = {
         drawerIcon: (
-            <Image
-                source={require('../assets/images/chat_icon.png')}
-                style={{ height: 24, width: 24 }}
-            />
+            <Icon style={{ color: "blue", fontSize: 22 }} name='chat' type="Entypo" />
         )
     }
 

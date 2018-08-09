@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
-    View,
-    Text,
-    AsyncStorage
+    Image,
+    AsyncStorage,
+    View
 } from 'react-native';
+import { Container, Header, Content, Form, Icon, Item, Input, Label, Button, Text, Spinner } from 'native-base';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import { FormLabel, FormInput, Button } from 'react-native-elements';
+// import { FormLabel, FormInput, Button } from 'react-native-elements';
 
 class SignInScreen extends Component {
     static navigationOptions = {
@@ -45,7 +46,7 @@ class SignInScreen extends Component {
             this.setState({
                 loading: false
             })
-            this.props.navigation.navigate('ChatScreen');
+            this.props.navigation.navigate('Home');
             console.log(name, id, token);
             console.log('userId from AsyncStorage', AsyncStorage.getItem('userId'))
         })
@@ -66,47 +67,72 @@ class SignInScreen extends Component {
     render() {
         let { email, password, error, loading } = this.state;
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>Sign In</Text>
-                <FormLabel>Email:</FormLabel>
-                <FormInput
-                    name="email"
-                    value={email}
-                    onChangeText={(email) => this.setState({ email })}
-                    placeholder="Your Email..."
-                />
-                <FormLabel>Password:</FormLabel>
-                <FormInput
-                    secureTextEntry
-                    name="password"
-                    value={password}
-                    onChangeText={(password) => this.setState({ password })}
-                    placeholder="Your Password..." />
-                <Button
-                    activityIndicatorStyle={{ padding: 11 }}
-                    loading={(loading) ? true : false}
-                    buttonStyle={styles.button}
-                    onPress={this.handleSubmit} title={(loading) ? '' : 'Sign In'} />
-                <Text style={{ marginTop: 15 }}>Or</Text>
-                <Button
-                    buttonStyle={styles.button}
-                    onPress={() => this.props.navigation.navigate('Register')} title='Register' />
-            </View>
+            <Container>
+                <Content style={{ marginLeft: 10, marginRight: 10, }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: 40 }}>
+                        <Image
+                            source={require('../../assets/images/graphql.png')}
+                            style={{
+                                width: 260,
+                                height: 120
+                            }}
+                        />
+                    </View>
+                    <Form>
+                        <Item floatingLabel>
+                            <Icon active name='user' type="Entypo" />
+                            <Label style={{ paddingLeft: 10 }}>Username</Label>
+                            <Input
+                                name="email"
+                                onChangeText={(email) => this.setState({ email })}
+                            />
+                        </Item>
+                        <Item floatingLabel last style={{ marginBottom: 20 }}>
+                            <Icon active name='lock' type="Entypo" />
+                            <Label style={{ paddingLeft: 10 }}>Password</Label>
+                            <Input secureTextEntry
+                                name="password"
+                                onChangeText={(password) => this.setState({ password })}
+                            />
+                        </Item>
+                        <Button block
+                            activityIndicatorStyle={{ padding: 11 }}
+                            buttonStyle={styles.button}
+                            onPress={this.handleSubmit}
+                        >
+                            {loading
+                                ? <Spinner color="white" />
+                                : <Text>Sign In</Text>
+                            }
+
+                        </Button>
+
+                        <Content style={{ marginTop: 10 }}>
+                            <Text style={{ textAlign: 'center', marginBottom: 10 }}>Don't have account yet?</Text>
+                            <Button bordered block
+
+                            >
+                                <Text>Register</Text>
+                            </Button>
+                        </Content>
+                    </Form>
+                </Content>
+            </Container>
         );
     }
 }
 
 const SIGN_IN_MUTATION = gql`
     mutation SignIn($email: String!, $password: String!) {
-        signinUser(email: { email: $email, password: $password }) {
-            token
+                    signinUser(email: {email: $email, password: $password }) {
+                    token
             user{
-                id
+                    id
                 name
+                }
             }
         }
-    }
-`;
+    `;
 
 const styles = {
     container: {

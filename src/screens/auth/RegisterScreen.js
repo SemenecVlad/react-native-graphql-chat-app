@@ -39,51 +39,88 @@ class RegisterScreen extends Component {
     render() {
         let { email, password, passwordConfirm, name, error } = this.state;
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>Register account</Text>
+            <Container>
+                <Content style={{ marginLeft: 10, marginRight: 10, }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: 40 }}>
+                        <Image
+                            source={require('../../assets/images/graphql.png')}
+                            style={{
+                                width: 260,
+                                height: 120
+                            }}
+                        />
+                    </View>
+                    <Form>
+                        <Item floatingLabel>
+                            <Icon active name='user' type="Entypo" />
+                            <Label style={{ paddingLeft: 10 }}>Username</Label>
+                            <Input />
+                        </Item>
+                        <Item floatingLabel last style={{ marginBottom: 20 }}>
+                            <Icon active name='lock' type="Entypo" />
+                            <Label style={{ paddingLeft: 10 }}>Password</Label>
+                            <Input />
+                        </Item>
+                        <Button block>
+                            <Text>Sign In</Text>
+                        </Button>
 
-                <FormLabel containerStyle={styles.label}>Name:</FormLabel>
-                <FormInput
-                    name='name'
-                    value={this.state.name}
-                    onChangeText={(name) => this.setState({ name })}
-                    placeholder="Your Name..." />
+                        <Content style={{ marginTop: 10 }}>
+                            <Text style={{ textAlign: 'center', marginBottom: 10 }}>Don't have account yet?</Text>
+                            <Button bordered block >
+                                <Text>Register</Text>
+                            </Button>
+                        </Content>
+                    </Form>
+                </Content>
+            </Container>
 
-                <FormLabel>Email:</FormLabel>
-                <FormInput
-                    name='email'
-                    value={this.state.email}
-                    onChangeText={(email) => this.setState({ email })}
-                    placeholder="Your Email..." />
-
-                <FormLabel>Password:</FormLabel>
-                <FormInput
-                    secureTextEntry
-                    name='password'
-                    value={this.state.password}
-                    onChangeText={(password) => this.setState({ password })}
-                    placeholder="Your Password..." />
-
-                <FormLabel>Confirm Password:</FormLabel>
-                <FormInput
-                    secureTextEntry
-                    name='passwordConfirm'
-                    value={this.state.passwordConfirm}
-                    onChangeText={(passwordConfirm) => this.setState({ passwordConfirm })}
-                    placeholder="Confirm Password..." />
-                <Button
-                    buttonStyle={styles.button}
-                    onPress={this.handleSubmit} title='Register' />
-                <View style={{ marginTop: 10, width: Dimensions.get("window").width }}>
-                    <Text style={{ textAlign: 'center' }}>Already have an account?</Text>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Auth')}>
-                        <Text style={{ textAlign: 'center', color: 'blue', fontWeight: 'bold', fontSize: 16 }}>Sign In</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
         );
     }
 }
+
+{/* <View style={styles.container}>
+    <Text style={styles.title}>Register account</Text>
+
+    <FormLabel containerStyle={styles.label}>Name:</FormLabel>
+    <FormInput
+        name='name'
+        value={this.state.name}
+        onChangeText={(name) => this.setState({ name })}
+        placeholder="Your Name..." />
+
+    <FormLabel>Email:</FormLabel>
+    <FormInput
+        name='email'
+        value={this.state.email}
+        onChangeText={(email) => this.setState({ email })}
+        placeholder="Your Email..." />
+
+    <FormLabel>Password:</FormLabel>
+    <FormInput
+        secureTextEntry
+        name='password'
+        value={this.state.password}
+        onChangeText={(password) => this.setState({ password })}
+        placeholder="Your Password..." />
+
+    <FormLabel>Confirm Password:</FormLabel>
+    <FormInput
+        secureTextEntry
+        name='passwordConfirm'
+        value={this.state.passwordConfirm}
+        onChangeText={(passwordConfirm) => this.setState({ passwordConfirm })}
+        placeholder="Confirm Password..." />
+    <Button
+        buttonStyle={styles.button}
+        onPress={this.handleSubmit} title='Register' />
+    <View style={{ marginTop: 10, width: Dimensions.get("window").width }}>
+        <Text style={{ textAlign: 'center' }}>Already have an account?</Text>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('Auth')}>
+            <Text style={{ textAlign: 'center', color: 'blue', fontWeight: 'bold', fontSize: 16 }}>Sign In</Text>
+        </TouchableOpacity>
+    </View>
+</View> */}
 
 const styles = {
     container: {

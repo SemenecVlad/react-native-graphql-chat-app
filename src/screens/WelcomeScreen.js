@@ -27,10 +27,6 @@ class WelcomeScreen extends Component {
                 <Content padder>
                     <Text>WelcomeScreen</Text>
                 </Content>
-
-                <Footer>
-                    <Text>Footer</Text>
-                </Footer>
             </Container>
         );
     }

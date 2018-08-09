@@ -6,7 +6,7 @@ class SettingsScreen extends Component {
 
     static navigationOptions = {
         drawerIcon: (
-            <Icon type='FontAwesome' style={{ color: "blue" }} name='cogs' />
+            <Icon type='FontAwesome' style={{ color: "blue", fontSize: 22 }} name='cogs' />
         )
     }
     render() {
