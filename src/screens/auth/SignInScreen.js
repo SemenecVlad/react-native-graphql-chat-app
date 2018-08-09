@@ -5,11 +5,11 @@ import {
     View
 } from 'react-native';
 import { Container, Header, Content, Form, Icon, Item, Input, Label, Button, Text, Spinner } from 'native-base';
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import { inject, observer } from 'mobx-react';
 
 // import { FormLabel, FormInput, Button } from 'react-native-elements';
-
+@inject('chatStore')
+@observer
 class SignInScreen extends Component {
     static navigationOptions = {
         title: 'Sign In',
@@ -36,20 +36,19 @@ class SignInScreen extends Component {
         this.setState({
             loading: true
         })
-        await this.props.signInMutation({
-            variables: {
-                email, password
-            }
-        }).then(({ data: { signinUser: { token, user: { id, name } } } }) => {
-            AsyncStorage.setItem('token', token);
-            AsyncStorage.setItem('userId', id);
-            this.setState({
-                loading: false
+        await this.props.chatStore.signIn(email, password)
+            .then(({ data: { signinUser: { token, user: { id, name } } } }) => {
+                // await AsyncStorage.setItem('token', token);
+                // await AsyncStorage.setItem('userId', id);
+                this.props.chatStore.changeUserID(id);
+                this.setState({
+                    loading: false
+                })
+                this.props.navigation.navigate('Home');
+                console.log(name, id, token);
+                console.log('userId from MobX', this.props.chatStore.currentUserID)
+
             })
-            this.props.navigation.navigate('Home');
-            console.log(name, id, token);
-            console.log('userId from AsyncStorage', AsyncStorage.getItem('userId'))
-        })
             .catch(error => {
                 this.setState({
                     error: 'No user found with that information'
@@ -80,8 +79,8 @@ class SignInScreen extends Component {
                     </View>
                     <Form>
                         <Item floatingLabel>
-                            <Icon active name='user' type="Entypo" />
-                            <Label style={{ paddingLeft: 10 }}>Username</Label>
+                            <Icon active name='email' type="MaterialIcons" />
+                            <Label style={{ paddingLeft: 10 }}>Email</Label>
                             <Input
                                 name="email"
                                 onChangeText={(email) => this.setState({ email })}
@@ -96,8 +95,6 @@ class SignInScreen extends Component {
                             />
                         </Item>
                         <Button block
-                            activityIndicatorStyle={{ padding: 11 }}
-                            buttonStyle={styles.button}
                             onPress={this.handleSubmit}
                         >
                             {loading
@@ -110,7 +107,7 @@ class SignInScreen extends Component {
                         <Content style={{ marginTop: 10 }}>
                             <Text style={{ textAlign: 'center', marginBottom: 10 }}>Don't have account yet?</Text>
                             <Button bordered block
-
+                                onPress={() => this.props.navigation.navigate('Register')}
                             >
                                 <Text>Register</Text>
                             </Button>
@@ -122,37 +119,4 @@ class SignInScreen extends Component {
     }
 }
 
-const SIGN_IN_MUTATION = gql`
-    mutation SignIn($email: String!, $password: String!) {
-                    signinUser(email: {email: $email, password: $password }) {
-                    token
-            user{
-                    id
-                name
-                }
-            }
-        }
-    `;
-
-const styles = {
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'aqua',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold'
-    },
-    button: {
-        marginTop: 20,
-        backgroundColor: 'blue',
-        borderRadius: 10,
-        width: 160
-    }
-}
-
-const SignInWithGQL = graphql(SIGN_IN_MUTATION, { name: 'signInMutation' })(SignInScreen);
-
-export default SignInWithGQL;
+export default SignInScreen;

@@ -1,25 +1,48 @@
 import React, { Component } from 'react';
 import { View, Text, AsyncStorage, ActivityIndicator, Image } from 'react-native';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
 
 import MessageWrap from '../components/MessageWrap';
 import MessageInput from '../components/MessageInput';
-import { Icon, Button, Container, Header, Body, Content, Left, Right, Footer, Item, Input } from 'native-base';
+
+import Message from '../components/Message';
+
+import { inject, observer } from 'mobx-react';
+import { POSTS_SUBSCRIPTION } from '../queries';
+import { Icon, Button, Container, Header, Body, Content, Left, Right, Footer, Item, Input, Spinner } from 'native-base';
 
 
+@inject('chatStore')
+@observer
 class ChatScreen extends Component {
     componentDidMount() {
-        if (this.state.userId === null) {
-            this.props.navigation.navigate('Auth')
+        this.unsubscribe = this.props.chatStore.subscribePosts('allPosts', 'Post', POSTS_SUBSCRIPTION, this.props.chatStore.roomId);
+    }
+
+    componentWillReceiveProps({ roomId }) {
+        if (this.unsubscribe) {
+            this.unsubscribe()
         }
 
-        this.getUserId();
-        console.log(this.getUserId())
+        this.unsubscribe = this.props.chatStore.subscribePosts('allPosts', 'Post', POSTS_SUBSCRIPTION, this.props.chatStore.roomId);
+    }
+
+    componentWillUnmount() {
+        if (this.unsubscribe) {
+            this.unsubscribe()
+        }
     }
 
     state = {
-        userId: null,
+        editRoom: false,
+        newRoomName: '',
+        modalIsOpen: false,
+        deleteModalIsOpen: false,
+        usersCount: null,
+        description: '',
+        file: null,
+        filesIds: 'cjia6p4gu091u0156homvbqtt',
+        userId: this.props.chatStore.currentUserID,
+        loading: false
     }
 
     static navigationOptions = {
@@ -28,22 +51,85 @@ class ChatScreen extends Component {
         )
     }
 
-    getUserId = async () => {
-        try {
-            const id = await AsyncStorage.getItem('userId');
-            console.log('getUserId', id);
-            if (id !== null) {
-                this.setState({
-                    userId: id
-                })
-            }
-        } catch (error) {
+    handlePost = async () => {
+        const { roomId, createPost, defaultRoomId } = this.props.chatStore;
+        let roomID = roomId;
+        if (roomId === '') {
+            roomID = defaultRoomId
+        }
+        const { description, userId, filesIds } = this.state;
+        await createPost(userId, description, filesIds, roomID);
+        this.setState({
+            description: '',
+            loading: false
+        })
+
+    }
+
+    uploadFile = () => {
+        let file = this.state.file;
+
+        if (file !== null) {
+            let data = new FormData();
+            data.append('data', file);
             this.setState({
-                error
-            })
+                loading: true
+            });
+            //console.log(data)
+            fetch('https://api.graph.cool/file/v1/cji3486nr3q4b0191ifdu8j6x', {
+                method: 'POST',
+                body: data,
+                name: 'data'
+            }).then(response => {
+                console.log('file upload response', response);
+                return response.json();
+            }).then(file => {
+                const filesIds = file.id;
+                console.log(file, filesIds);
+                this.setState({
+                    filesIds
+                });
+                return filesIds;
+            }).then(() => {
+                this.handlePost();
+                this.setState({
+                    filesIds: 'cjia6p4gu091u0156homvbqtt',
+                    file: null,
+                    loading: false
+                })
+                console.log('[POST SENDED]-state- :', this.state.file)
+            }).catch(err => console.log('[ERROR]', err))
+        } else {
+            // if file not selected in file input then set filesIds value to the default,
+            // and get the default 1px line image from storage
+            this.setState({
+                filesIds: 'cjia6p4gu091u0156homvbqtt'
+            });
+            this.handlePost();
+            // this.props.refresh();
         }
     }
+
+    onChange = e => {
+        this.setState({
+            file: e.target.files[0]
+        });
+    }
     render() {
+        const {
+            posts,
+            postsLoading,
+            roomName,
+            defaultRoomName,
+            usersRoomMembers,
+            usersRoomMembersLoading,
+            usersNotRoomMembers,
+            usersNotRoomMembersLoading,
+            updateRoomNameMutation,
+            roomId,
+            changeRoomName,
+            usersRoomMembersCount
+        } = this.props.chatStore;
         return (
             <Container>
                 <Header>
@@ -53,7 +139,7 @@ class ChatScreen extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Chat</Text>
+                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>{roomName ? roomName : defaultRoomName}</Text>
                     </Body>
                     <Right>
                         <Button transparent>
@@ -73,20 +159,36 @@ class ChatScreen extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content contentContainerStyle={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <Text>ChatScreen</Text>
+                <Content padder>
+
+
+                    {
+                        posts.map(post => (
+                            <Message
+                                time={post.createdAt}
+                                from="You"
+                                id={post.id}
+                                key={post.id}
+                                userName={post.user.name}
+                                post={post}
+                                files={post.files[0]}
+                            />
+                        ))
+                    }
                 </Content>
 
                 <Footer style={{ backgroundColor: 'white', alignContent: 'center' }}>
                     <Item regular style={{ flex: 1 }}>
-                        <Input placeholder="Enter your message..." />
+                        <Input
+                            placeholder="Enter your message..."
+                            onChangeText={(description) => this.setState({ description })}
+                        />
                     </Item>
-                    <Button primary rounded style={{ width: 45, marginTop: 5, paddingLeft: 0, paddingRight: 0 }}>
-                        <Icon name='send' type='MaterialIcons' style={{ fontSize: 20, marginLeft: 13, marginRight: 0 }} />
+                    <Button primary rounded style={{ width: 45, marginTop: 5, paddingLeft: 0, paddingRight: 0 }}
+                        onPress={this.uploadFile}
+                    >
+                        {this.state.loading ? <Spinner /> : <Icon name='send' type='MaterialIcons' style={{ fontSize: 20, marginLeft: 13, marginRight: 0 }} />}
+
                     </Button>
                 </Footer>
             </Container>
@@ -104,43 +206,6 @@ const styles = {
     },
 }
 
-const ALL_POSTS_QUERY = gql`
-  query AllPostsQuery {
-    allPosts(orderBy: createdAt_DESC) {
-      id
-      description
-      createdAt
-      user{
-          name
-      }
-      files{
-          url
-      }
-    }
-  }
-`;
 
-const POSTS_SUBSCRIPTION = gql`
-  subscription {
-      Post(filter: {
-          mutation_in: [CREATED, DELETED]
-      }) {
-          node {
-              description
-              createdAt
-              id
-              user {
-                  name
-              }
-              files {
-                  url
-              }
-          }
-          previousValues {
-              id
-          }
-      }
-  }
-`;
 
 export default ChatScreen;

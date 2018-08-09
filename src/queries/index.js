@@ -62,6 +62,7 @@ export const GET_USERS_QUERY = gql`
         allUsers{
             name
             id
+            email
         }
     }
 `;
@@ -100,7 +101,7 @@ export const GET_ROOMS_BY_USER = gql`
     }
 `;
 
-export const USERS_SUBSCRIPTION= gql`
+export const USERS_SUBSCRIPTION = gql`
   subscription {
   User {
       mutation

@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 // import { createBottomTabNavigator } from 'react-navigation';
 
-import { DrawerNavigator, DrawerItems, StackNavigator } from 'react-navigation';
+import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
 
 
 import { ApolloProvider } from 'react-apollo';
@@ -44,7 +44,7 @@ const CustomDrawerContentComponent = (props) => (
   </Container>
 )
 
-const DrawNav = DrawerNavigator({
+const DrawNav = createDrawerNavigator({
   Home: {
     screen: WelcomeScreen
   },
@@ -70,9 +70,12 @@ DrawNav.navigationOptions = ({ navigation }) => ({
   header: null
 });
 
-const MainStackNav = StackNavigator({
+const MainStackNav = createStackNavigator({
   Login: {
     screen: SignInScreen
+  },
+  Register: {
+    screen: RegisterScreen
   },
   Home: {
     screen: DrawNav

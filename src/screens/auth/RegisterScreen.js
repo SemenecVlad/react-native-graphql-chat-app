@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { FormLabel, FormInput, Button } from 'react-native-elements';
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import { View, Dimensions, Image } from 'react-native';
+// import { FormLabel, FormInput, Button } from 'react-native-elements';
 
+import { inject, observer } from 'mobx-react';
+
+import { Container, Header, Content, Form, Icon, Item, Input, Label, Button, Text, Spinner } from 'native-base';
+
+@inject('chatStore')
+@observer
 class RegisterScreen extends Component {
+    static navigationOptions = {
+        title: 'Sign In',
+        headerStyle: {
+            display: 'none'
+        }
+    }
+
     state = {
         email: '',
         password: '',
@@ -20,14 +31,11 @@ class RegisterScreen extends Component {
             });
             return;
         }
-        await this.props.registerMutation({
-            variables: {
-                email, password, name
-            }
-        }).then((data) => {
-            // console.log(data)
-            this.props.navigation.navigate('Auth')
-        })
+        await this.props.chatStore.register(email, password, name)
+            .then((data) => {
+                // console.log(data)
+                this.props.navigation.navigate('Login')
+            })
             .catch((error) => {
                 console.log("ЁБА...", error)
                 this.setState({
@@ -41,7 +49,7 @@ class RegisterScreen extends Component {
         return (
             <Container>
                 <Content style={{ marginLeft: 10, marginRight: 10, }}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: 40 }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: 20 }}>
                         <Image
                             source={require('../../assets/images/graphql.png')}
                             style={{
@@ -50,25 +58,56 @@ class RegisterScreen extends Component {
                             }}
                         />
                     </View>
+                    <View>
+                        <Text>{error}</Text>
+                    </View>
                     <Form>
                         <Item floatingLabel>
-                            <Icon active name='user' type="Entypo" />
+                            <Icon active name='account-box' type="MaterialCommunityIcons" />
                             <Label style={{ paddingLeft: 10 }}>Username</Label>
-                            <Input />
+                            <Input
+                                name='name'
+                                onChangeText={(name) => this.setState({ name })}
+                            />
+                        </Item>
+                        <Item floatingLabel>
+                            <Icon active name='email' type="MaterialIcons" />
+                            <Label style={{ paddingLeft: 10 }}>Email</Label>
+                            <Input
+                                name='email'
+                                onChangeText={(email) => this.setState({ email })}
+                            />
+                        </Item>
+                        <Item floatingLabel last style={{ marginBottom: 0 }}>
+                            <Icon active name='lock' type="Entypo" />
+                            <Label style={{ paddingLeft: 10 }}>Password</Label>
+                            <Input
+                                onChangeText={(password) => this.setState({ password })}
+                                name='password'
+                                secureTextEntry
+                            />
                         </Item>
                         <Item floatingLabel last style={{ marginBottom: 20 }}>
                             <Icon active name='lock' type="Entypo" />
-                            <Label style={{ paddingLeft: 10 }}>Password</Label>
-                            <Input />
+                            <Label style={{ paddingLeft: 10 }}>Password Confirm</Label>
+                            <Input
+                                onChangeText={(passwordConfirm) => this.setState({ passwordConfirm })}
+                                name='passwordConfirm'
+                                secureTextEntry
+                            />
                         </Item>
-                        <Button block>
-                            <Text>Sign In</Text>
+                        <Button block
+                            onPress={this.handleSubmit}
+                        >
+                            <Text>Create User</Text>
                         </Button>
 
                         <Content style={{ marginTop: 10 }}>
-                            <Text style={{ textAlign: 'center', marginBottom: 10 }}>Don't have account yet?</Text>
-                            <Button bordered block >
-                                <Text>Register</Text>
+                            <Text style={{ textAlign: 'center', marginBottom: 10 }}>Already have an account? Please </Text>
+                            <Button bordered block
+                                onPress={() => this.props.navigation.navigate('Login')}
+                            >
+                                <Text>Sign In</Text>
                             </Button>
                         </Content>
                     </Form>
@@ -141,17 +180,17 @@ const styles = {
     }
 }
 
-const REGISTER_MUTATION = gql`
-    mutation Register($email: String!, $password: String!, $name: String!) {
-        createUser(name:$name,authProvider: {email: {email: $email, password: $password}})
-        {
-            email
-            name
-            password
-        }
-    }
-`;
+// const REGISTER_MUTATION = gql`
+//     mutation Register($email: String!, $password: String!, $name: String!) {
+//         createUser(name:$name,authProvider: {email: {email: $email, password: $password}})
+//         {
+//             email
+//             name
+//             password
+//         }
+//     }
+// `;
 
-const RegisterWithGQL = graphql(REGISTER_MUTATION, { name: 'registerMutation' })(RegisterScreen);
+// const RegisterWithGQL = graphql(REGISTER_MUTATION, { name: 'registerMutation' })();
 
-export default RegisterWithGQL;
+export default RegisterScreen;

@@ -157,7 +157,7 @@ const chatStore = new class {
         this.subscribe('allUsers', 'User', USERS_SUBSCRIPTION);
     }
 
-    currentUserID = AsyncStorage.getItem('userId');
+
 
     @action subscribe = (prop, node, document) => this[prop].ref.subscribeToMore({
         document,
@@ -307,7 +307,11 @@ const chatStore = new class {
         variables: { id }
     }).catch(error => console.log(error));
 
-    @observable roomId = "";
+    @observable roomId = "cjjpigz0e17eo01354las7vgc";
+    @observable currentUserID = '';
+    @action changeUserID(userID) {
+        this.currentUserID = userID;
+    }
     @observable roomName = "";
     @observable editMessage = false;
     @action showEditMessageInput = () => { this.editMessage = true };
