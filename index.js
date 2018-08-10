@@ -297,7 +297,7 @@ const chatStore = new class {
         // in other rooms UI doesn't updates, only when manually refresh browser, you can see changes
         refetchQueries: [
             {
-                query: GET_ROOMS_QUERY
+                query: GET_ROOMS_BY_USER
             }
         ]
     }).catch(error => console.log(error));

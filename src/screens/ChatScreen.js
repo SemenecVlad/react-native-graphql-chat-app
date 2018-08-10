@@ -96,7 +96,8 @@ class ChatScreen extends Component {
                     filesIds: 'cjia6p4gu091u0156homvbqtt',
                     file: null,
                     loading: false
-                })
+                });
+                // this.textInput.clear();
                 console.log('[POST SENDED]-state- :', this.state.file)
             }).catch(err => console.log('[ERROR]', err))
         } else {
@@ -106,6 +107,7 @@ class ChatScreen extends Component {
                 filesIds: 'cjia6p4gu091u0156homvbqtt'
             });
             this.handlePost();
+
             // this.props.refresh();
         }
     }
@@ -182,9 +184,12 @@ class ChatScreen extends Component {
                         <Input
                             placeholder="Enter your message..."
                             onChangeText={(description) => this.setState({ description })}
+                            ref="textInput"
+                            value={this.state.description}
                         />
                     </Item>
                     <Button primary rounded style={{ width: 45, marginTop: 5, paddingLeft: 0, paddingRight: 0 }}
+                        type='submit'
                         onPress={this.uploadFile}
                     >
                         {this.state.loading ? <Spinner /> : <Icon name='send' type='MaterialIcons' style={{ fontSize: 20, marginLeft: 13, marginRight: 0 }} />}

@@ -3,10 +3,15 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Image from 'react-native-image-progress';
+import { inject, observer } from 'mobx-react';
 
+
+@inject('chatStore')
+@observer
 class Message extends Component {
     deletePost = async (id) => {
-        await this.props.deletePostMutation({ variables: { id } });
+        // await this.props.deletePostMutation({ variables: { id } });
+        await this.props.chatStore.deletePost(id)
     }
 
     render() {
@@ -56,17 +61,18 @@ const styles = {
 
 }
 
-const DELETE_POST_MUTATION = gql`
-  mutation DeletePostMutation($id: ID!) {
-    deletePost(id: $id ) {
-      id
-    }
-  }
-`;
+// const DELETE_POST_MUTATION = gql`
+//   mutation DeletePostMutation($id: ID!) {
+//     deletePost(id: $id ) {
+//       id
+//     }
+//   }
+// `;
 
-const MessageWithMutation = graphql(
-    DELETE_POST_MUTATION,
-    { name: 'deletePostMutation' }
-)(Message);
+// const MessageWithMutation = graphql(
+//     DELETE_POST_MUTATION,
+//     { name: 'deletePostMutation' }
+// )(Message);
 
-export default MessageWithMutation;
+// export default MessageWithMutation;
+export default Message;

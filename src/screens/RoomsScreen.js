@@ -12,6 +12,7 @@ class RoomsScreen extends Component {
         this.state = {
             isOpen: false,
             isDisabled: false,
+            newRoomName: ''
         };
         this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     }
@@ -21,6 +22,14 @@ class RoomsScreen extends Component {
         drawerIcon: (
             <Icon style={{ color: "blue", fontSize: 22 }} name='chat' type="Entypo" />
         )
+    }
+
+    addNewRoom = () => {
+        this.props.chatStore.createRoom(this.state.newRoomName, [this.props.chatStore.currentUserID]);
+        this.setState({
+            newRoomName: '',
+            isOpen: false
+        })
     }
 
 
@@ -69,20 +78,31 @@ class RoomsScreen extends Component {
                         <Content>
                             <List
                                 leftOpenValue={50}
-                                rightOpenValue={-50}
+                                rightOpenValue={-100}
                                 dataSource={this.ds.cloneWithRows(this.props.chatStore.rooms)}
                                 renderRow={room =>
                                     <ListItem>
-                                        <Text> {room.name} </Text>
+                                        <Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {room.name} </Text>
                                     </ListItem>}
                                 renderLeftHiddenRow={room =>
                                     <Button full warning onPress={() => alert('Name:')}>
                                         <Icon active name="information-circle" />
                                     </Button>}
-                                renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                                    <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
-                                        <Icon active name="trash" />
-                                    </Button>}
+                                renderRightHiddenRow={(room) =>
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <Button full onPress={
+                                            () => {
+                                                this.props.chatStore.changeRoom(room.id, room.name);
+                                                console.log(this.props.chatStore.roomId);
+                                                this.props.navigation.navigate('Chat');
+                                            }
+                                        }>
+                                            <Icon active name="chat" type="Entypo" style={{ fontSize: 16 }} />
+                                        </Button>
+                                        <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+                                            <Icon active name="trash" />
+                                        </Button>
+                                    </View>}
                             />
 
                         </Content>
@@ -120,16 +140,18 @@ class RoomsScreen extends Component {
                                 <Icon active name='email' type="MaterialIcons" />
                                 <Label style={{ paddingLeft: 10 }}>Enter room name:</Label>
                                 <Input
-                                    name="email"
-                                    onChangeText={(email) => this.setState({ email })}
+                                    name="room"
+                                    onChangeText={(room) => this.setState({ newRoomName: room })}
                                 />
                             </Item>
                         </Content>
 
                         <Footer style={{ backgroundColor: 'white', justifyContent: 'space-between' }} >
                             <FooterTab>
-                                <Button block success>
-                                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Create Room</Text>
+                                <Button block success onPress={this.addNewRoom}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+                                        Create Room
+                                    </Text>
                                 </Button>
                             </FooterTab>
                         </Footer>

@@ -16,6 +16,10 @@ class UsersScreen extends Component {
             <Icon style={{ color: "blue" }} name='people' />
         )
     }
+
+    addNewRoomWithUser = (userName, userId) => {
+        this.props.chatStore.createRoom(userName, [this.props.chatStore.currentUserID, userId]);
+    }
     render() {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         console.log('Users: ', this.props.chatStore.users)
@@ -40,20 +44,32 @@ class UsersScreen extends Component {
                         : (
                             <List
                                 leftOpenValue={50}
-                                rightOpenValue={-50}
+                                rightOpenValue={-100}
                                 dataSource={this.ds.cloneWithRows(this.props.chatStore.users)}
                                 renderRow={user =>
                                     <ListItem>
-                                        <Text> {user.name} </Text>
+                                        <Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {user.name} </Text>
                                     </ListItem>}
                                 renderLeftHiddenRow={user =>
                                     <Button full onPress={() => alert('Name: ' + user.name + '; ' + 'Email: ' + user.email)}>
                                         <Icon active name="information-circle" />
                                     </Button>}
-                                renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                                    <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
-                                        <Icon active name="trash" />
-                                    </Button>}
+                                renderRightHiddenRow={(user) =>
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <Button full onPress={
+                                            () => {
+                                                this.addNewRoomWithUser(user.name, user.id);
+
+                                                this.props.navigation.navigate('Chat');
+                                            }
+                                        }>
+                                            <Icon active name="chat" type="Entypo" style={{ fontSize: 16 }} />
+                                        </Button>
+                                        <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+                                            <Icon active name="trash" />
+                                        </Button>
+                                    </View>
+                                }
                             />
                         )
                     }
