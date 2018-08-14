@@ -157,8 +157,6 @@ const chatStore = new class {
         this.subscribe('allUsers', 'User', USERS_SUBSCRIPTION);
     }
 
-
-
     @action subscribe = (prop, node, document) => this[prop].ref.subscribeToMore({
         document,
         updateQuery: (current, { subscriptionData }) => {
@@ -253,7 +251,10 @@ const chatStore = new class {
         variables: { userId, roomId },
         refetchQueries: [
             {
-                query: GET_ROOMS_QUERY
+                query: GET_ROOMS_BY_USER,
+                variables: {
+                    currentUserID: this.currentUserID
+                }
             },
             {
                 query: GET_USERS_ROOM_MEMBERS,
@@ -326,6 +327,10 @@ const chatStore = new class {
 
     @action changeRoomName = (roomName) => {
         this.roomName = roomName;
+    }
+    @action logout = () => {
+        this.changeUserID(null);
+
     }
 }();
 

@@ -25,8 +25,8 @@ class SignInScreen extends Component {
     }
 
     state = {
-        email: '',
-        password: '',
+        email: null,
+        password: null,
         error: '',
         loading: false
     }
@@ -41,6 +41,7 @@ class SignInScreen extends Component {
                 // await AsyncStorage.setItem('token', token);
                 // await AsyncStorage.setItem('userId', id);
                 this.props.chatStore.changeUserID(id);
+                AsyncStorage.setItem('userId', id);
                 this.setState({
                     loading: false
                 })
@@ -51,16 +52,20 @@ class SignInScreen extends Component {
             })
             .catch(error => {
                 this.setState({
-                    error: 'No user found with that information'
+                    loading: false,
+                    email: null,
+                    password: null,
+                    error
                 })
             });
 
         // console.log(this.state.email, this.state.password)
     }
 
-    renderError = (error) => {
-        if (error !== '') {
-            return <Text>{error}</Text>
+
+    renderError = () => {
+        if (this.state.error) {
+            return <Text style={{ paddingHorizontal: 15, paddingVertical: 15, color: 'red', textAlign: 'center', fontWeight: 'bold' }}>No user found with that info</Text>
         }
     }
     render() {
@@ -77,13 +82,17 @@ class SignInScreen extends Component {
                             }}
                         />
                     </View>
+                    {this.renderError()}
                     <Form>
                         <Item floatingLabel>
                             <Icon active name='email' type="MaterialIcons" />
                             <Label style={{ paddingLeft: 10 }}>Email</Label>
                             <Input
                                 name="email"
+                                keyboardType="email-address"
                                 onChangeText={(email) => this.setState({ email })}
+                                value={this.state.email}
+                                onFocus={() => this.setState({ error: '' })}
                             />
                         </Item>
                         <Item floatingLabel last style={{ marginBottom: 20 }}>
@@ -92,10 +101,18 @@ class SignInScreen extends Component {
                             <Input secureTextEntry
                                 name="password"
                                 onChangeText={(password) => this.setState({ password })}
+                                value={this.state.password}
                             />
                         </Item>
+
                         <Button block
-                            onPress={this.handleSubmit}
+                            onPress={() => {
+                                this.handleSubmit();
+                                this.setState({
+                                    email: null,
+                                    password: null
+                                })
+                            }}
                         >
                             {loading
                                 ? <Spinner color="white" />

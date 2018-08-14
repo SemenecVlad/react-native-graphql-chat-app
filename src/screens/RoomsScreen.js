@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ListView, Dimensions } from 'react-native';
+import { View, Text, Image, ListView, Dimensions, AsyncStorage } from 'react-native';
 import { Icon, Button, Container, Header, Body, Content, Footer, FooterTab, Left, Right, List, ListItem, Spinner, Input, Item, Label } from 'native-base';
 import Modal from 'react-native-modalbox';
 import { inject, observer } from 'mobx-react';
@@ -12,7 +12,8 @@ class RoomsScreen extends Component {
         this.state = {
             isOpen: false,
             isDisabled: false,
-            newRoomName: ''
+            newRoomName: '',
+            userId: ''
         };
         this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     }
@@ -23,15 +24,6 @@ class RoomsScreen extends Component {
             <Icon style={{ color: "blue", fontSize: 22 }} name='chat' type="Entypo" />
         )
     }
-
-    addNewRoom = () => {
-        this.props.chatStore.createRoom(this.state.newRoomName, [this.props.chatStore.currentUserID]);
-        this.setState({
-            newRoomName: '',
-            isOpen: false
-        })
-    }
-
 
     render() {
         const onClose = () => {
@@ -44,6 +36,9 @@ class RoomsScreen extends Component {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         console.log('Rooms: ', this.props.chatStore.rooms);
         console.log('UserID: ', this.props.chatStore.currentUserID);
+        console.log('RoomID: ', this.props.chatStore.roomId);
+
+        // console.log('UserID_AsyncStorage: ', this._userId());
         return (
             <Container>
                 <Header>
@@ -71,26 +66,34 @@ class RoomsScreen extends Component {
                 {this.props.chatStore.roomsLoading
                     ? (
                         <Content>
-                            <Spinner />
+                            <Spinner color='blue' />
                         </Content>
                     )
                     : (
                         <Content>
                             <List
                                 leftOpenValue={50}
-                                rightOpenValue={-100}
+                                rightOpenValue={-50}
                                 dataSource={this.ds.cloneWithRows(this.props.chatStore.rooms)}
                                 renderRow={room =>
                                     <ListItem>
-                                        <Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {room.name} </Text>
+                                        <Left><Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {room.name} </Text></Left>
+                                        <Right style={{ flexDirection: 'row' }}>
+                                            <Text note style={{ marginRight: 5, opacity: 0.5 }}>
+                                                Swipe
+                                            </Text>
+                                            <Icon name="arrow-forward" />
+
+                                        </Right>
+
                                     </ListItem>}
                                 renderLeftHiddenRow={room =>
-                                    <Button full warning onPress={() => alert('Name:')}>
+                                    <Button full onPress={() => alert(`Name: ${room.name}`)}>
                                         <Icon active name="information-circle" />
                                     </Button>}
                                 renderRightHiddenRow={(room) =>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
-                                        <Button full onPress={
+                                        <Button full warning onPress={
                                             () => {
                                                 this.props.chatStore.changeRoom(room.id, room.name);
                                                 console.log(this.props.chatStore.roomId);
@@ -99,9 +102,7 @@ class RoomsScreen extends Component {
                                         }>
                                             <Icon active name="chat" type="Entypo" style={{ fontSize: 16 }} />
                                         </Button>
-                                        <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
-                                            <Icon active name="trash" />
-                                        </Button>
+
                                     </View>}
                             />
 
@@ -142,13 +143,21 @@ class RoomsScreen extends Component {
                                 <Input
                                     name="room"
                                     onChangeText={(room) => this.setState({ newRoomName: room })}
+                                    value={this.state.newRoomName}
                                 />
                             </Item>
                         </Content>
 
                         <Footer style={{ backgroundColor: 'white', justifyContent: 'space-between' }} >
                             <FooterTab>
-                                <Button block success onPress={this.addNewRoom}>
+                                <Button block success type="submit" onPress={() => {
+                                    this.props.chatStore.createRoom(this.state.newRoomName, [this.props.chatStore.currentUserID]);
+                                    this.refs.modal1.close();
+                                    this.setState({
+                                        newRoomName: ''
+                                    });
+                                }}
+                                >
                                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
                                         Create Room
                                     </Text>

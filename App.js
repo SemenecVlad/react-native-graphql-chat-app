@@ -4,10 +4,8 @@ import {
   Image,
   Text
 } from 'react-native';
-// import { createBottomTabNavigator } from 'react-navigation';
 
-import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
-
+import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
 
 import { ApolloProvider } from 'react-apollo';
 import { inject, observer } from 'mobx-react'
@@ -19,30 +17,7 @@ import ChatScreen from './src/screens/ChatScreen';
 import UsersScreen from './src/screens/UsersScreen';
 import RoomsScreen from './src/screens/RoomsScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
-import { Container, Content, Header, Body, Button, Icon } from 'native-base';
-
-const CustomDrawerContentComponent = (props) => (
-  <Container>
-    <Header style={{ height: 150, backgroundColor: 'white' }}>
-      <Body>
-        <Image
-          style={styles.drawerImage}
-          source={require('./src/assets/images/graphql.png')} />
-      </Body>
-    </Header>
-
-    <Content>
-      <DrawerItems {...props} />
-      <Button
-        block
-        primary
-      >
-        <Icon name='home' />
-        <Text style={{ color: 'white' }}>Log Out</Text>
-      </Button>
-    </Content>
-  </Container>
-)
+import DrawBar from './src/components/DrawBar';
 
 const DrawNav = createDrawerNavigator({
   Home: {
@@ -63,7 +38,7 @@ const DrawNav = createDrawerNavigator({
 }, {
     initialRouteName: 'Home',
     drawerPosition: 'left',
-    contentComponent: CustomDrawerContentComponent
+    contentComponent: DrawBar
   });
 
 DrawNav.navigationOptions = ({ navigation }) => ({

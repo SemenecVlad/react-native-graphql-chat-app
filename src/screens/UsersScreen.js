@@ -43,12 +43,20 @@ class UsersScreen extends Component {
                         ? (<Spinner />)
                         : (
                             <List
+                                icon="chat"
                                 leftOpenValue={50}
                                 rightOpenValue={-100}
                                 dataSource={this.ds.cloneWithRows(this.props.chatStore.users)}
                                 renderRow={user =>
                                     <ListItem>
-                                        <Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {user.name} </Text>
+                                        <Left><Text style={{ marginLeft: 12, fontWeight: 'bold' }}> {user.name} </Text></Left>
+                                        <Right style={{ flexDirection: 'row' }}>
+                                            <Text note style={{ marginRight: 5, opacity: 0.5 }}>
+                                                Swipe
+                                            </Text>
+                                            <Icon name="arrow-forward" />
+
+                                        </Right>
                                     </ListItem>}
                                 renderLeftHiddenRow={user =>
                                     <Button full onPress={() => alert('Name: ' + user.name + '; ' + 'Email: ' + user.email)}>
@@ -56,7 +64,7 @@ class UsersScreen extends Component {
                                     </Button>}
                                 renderRightHiddenRow={(user) =>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
-                                        <Button full onPress={
+                                        <Button full warning onPress={
                                             () => {
                                                 this.addNewRoomWithUser(user.name, user.id);
 
