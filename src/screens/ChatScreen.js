@@ -250,6 +250,7 @@ class ChatScreen extends Component {
                                     id={post.id}
                                     key={post.id}
                                     userName={post.user.name}
+                                    userId={post.user.id}
                                     post={post}
                                     files={post.files[0]}
                                 />

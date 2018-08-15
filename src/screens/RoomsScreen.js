@@ -88,8 +88,8 @@ class RoomsScreen extends Component {
 
                                     </ListItem>}
                                 renderLeftHiddenRow={room =>
-                                    <Button full onPress={() => alert(`Name: ${room.name}`)}>
-                                        <Icon active name="information-circle" />
+                                    <Button full onPress={() => alert(`Name: ${room.name}; Users: ${room._usersMeta.count}`)}>
+                                        <Icon active name="information-circle" style={{ fontSize: 20 }} />
                                     </Button>}
                                 renderRightHiddenRow={(room) =>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>

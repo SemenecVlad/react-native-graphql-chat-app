@@ -12,6 +12,7 @@ export const ALL_POSTS_QUERY = gql`
       createdAt
       user{
           name
+          id
       }
       files{
           url

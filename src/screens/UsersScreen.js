@@ -65,8 +65,9 @@ class UsersScreen extends Component {
                                 renderRightHiddenRow={(user) =>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Button full warning onPress={
-                                            () => {
-                                                this.addNewRoomWithUser(user.name, user.id);
+                                            async () => {
+                                                await this.props.chatStore.createRoom(user.name, [this.props.chatStore.currentUserID, user.id])
+                                                    .then(room => this.props.chatStore.changeRoom(room.data.createRoom.id, room.data.createRoom.name))
 
                                                 this.props.navigation.navigate('Chat');
                                             }
