@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
-import { Icon, Button, Container, Header, Body, Content, Left, Right, Footer } from 'native-base';
+import { Icon, Button, Container, Header, Body, Content, Left, Right, Text } from 'native-base';
 
 class WelcomeScreen extends Component {
 
@@ -25,7 +24,7 @@ class WelcomeScreen extends Component {
                 </Header>
 
                 <Content padder>
-                    <Text>WelcomeScreen</Text>
+                    <Text>Here will be some news</Text>
                 </Content>
             </Container>
         );
