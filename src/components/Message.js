@@ -19,9 +19,11 @@ class Message extends Component {
             <Content contentContainerStyle={styles.postStyle} >
                 <Left style={{ width: 280, justifyContent: 'flex-start' }}>
                     <Text style={styles.messageStyle}>{description}</Text>
-                    {files !== undefined ? <Image
-                        indicator={ActivityIndicator}
-                        source={{ uri: files.url }} style={(files.url === defImg ? { opacity: 1 } : { width: 100, height: 100 })} /> : <View />}
+                    {files !== undefined
+                        ? <Image
+                            indicator={ActivityIndicator}
+                            source={{ uri: files.url }} style={(files.url === defImg ? { opacity: 1 } : { width: 100, height: 100 })} />
+                        : <View />}
                     <Text style={styles.descriptionStyle}>Message by: {userName}</Text>
                 </Left>
 
